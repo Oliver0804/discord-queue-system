@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { EventService } from '@/lib/db'
 
 export async function GET(
   request: NextRequest,
@@ -16,50 +16,19 @@ export async function GET(
     }
 
     // 根據分享碼或主持人碼查找活動
-    const event = await prisma.event.findFirst({
-      where: {
-        OR: [
-          { shareCode: code },
-          { hostCode: code }
-        ]
-      },
-      include: {
-        queues: {
-          where: {
-            status: {
-              not: 'removed'
-            }
-          },
-          orderBy: {
-            position: 'asc'
-          }
-        }
-      }
-    })
+    const result = await EventService.findByCodeWithAuth(code)
 
-    if (!event) {
+    if (!result.event) {
       return NextResponse.json(
         { error: '找不到該活動' },
         { status: 404 }
       )
     }
 
-    // 判斷是主持人還是觀眾
-    const isHost = event.hostCode === code
-
     return NextResponse.json({
       success: true,
-      event: {
-        ...event,
-        createdAt: event.createdAt.toISOString(),
-        updatedAt: event.updatedAt.toISOString(),
-        queues: event.queues.map(queue => ({
-          ...queue,
-          joinedAt: queue.joinedAt.toISOString(),
-          startedAt: queue.startedAt?.toISOString() || null
-        }))
-      },
-      isHost
+      event: result.event,
+      isHost: result.isHost
     })
 
   } catch (error) {
@@ -80,34 +49,25 @@ export async function PATCH(
     const body = await request.json()
     
     // 只有主持人碼可以更新活動
-    const event = await prisma.event.findFirst({
-      where: { hostCode: code }
-    })
+    const event = await EventService.findByCode(code)
 
-    if (!event) {
+    if (!event || event.hostCode !== code) {
       return NextResponse.json(
         { error: '無權限或活動不存在' },
         { status: 404 }
       )
     }
 
-    const updatedEvent = await prisma.event.update({
-      where: { id: event.id },
-      data: {
-        status: body.status,
-        name: body.name,
-        description: body.description,
-        speakTime: body.speakTime
-      }
+    const updatedEvent = await EventService.update(event.id, {
+      status: body.status,
+      name: body.name,
+      description: body.description,
+      speakTime: body.speakTime
     })
 
     return NextResponse.json({
       success: true,
-      event: {
-        ...updatedEvent,
-        createdAt: updatedEvent.createdAt.toISOString(),
-        updatedAt: updatedEvent.updatedAt.toISOString()
-      }
+      event: updatedEvent
     })
 
   } catch (error) {

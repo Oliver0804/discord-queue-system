@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { QueueService } from '@/lib/db'
 
 export async function DELETE(
   request: NextRequest,
@@ -16,9 +16,7 @@ export async function DELETE(
     }
 
     // 先找到要刪除的排隊項目
-    const queueToRemove = await prisma.queue.findUnique({
-      where: { id }
-    })
+    const queueToRemove = await QueueService.findById(id)
 
     if (!queueToRemove) {
       return NextResponse.json(
@@ -28,22 +26,10 @@ export async function DELETE(
     }
 
     // 標記為已移除而不是實際刪除，保持歷史記錄
-    await prisma.queue.update({
-      where: { id },
-      data: { status: 'removed' }
-    })
+    await QueueService.markAsRemoved(id)
 
     // 重新整理其他排隊項目的位置
-    await prisma.queue.updateMany({
-      where: {
-        eventId: queueToRemove.eventId,
-        position: { gt: queueToRemove.position },
-        status: { not: 'removed' }
-      },
-      data: {
-        position: { decrement: 1 }
-      }
-    })
+    await QueueService.adjustPositionsAfterRemoval(queueToRemove.eventId, queueToRemove.position)
 
     return NextResponse.json({
       success: true,
@@ -74,22 +60,15 @@ export async function PATCH(
       )
     }
 
-    const updatedQueue = await prisma.queue.update({
-      where: { id },
-      data: {
-        status: body.status,
-        startedAt: body.startedAt ? new Date(body.startedAt) : undefined,
-        extendedTime: body.extendedTime
-      }
+    const updatedQueue = await QueueService.update(id, {
+      status: body.status,
+      startedAt: body.startedAt || null,
+      extendedTime: body.extendedTime
     })
 
     return NextResponse.json({
       success: true,
-      queue: {
-        ...updatedQueue,
-        joinedAt: updatedQueue.joinedAt.toISOString(),
-        startedAt: updatedQueue.startedAt?.toISOString() || null
-      }
+      queue: updatedQueue
     })
 
   } catch (error) {

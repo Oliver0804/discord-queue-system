@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { EventService } from '@/lib/db'
 import { generateCode } from '@/lib/utils'
 import { CreateEventData } from '@/types'
 
@@ -24,37 +24,25 @@ export async function POST(request: NextRequest) {
       shareCode = generateCode()
       
       // 檢查碼是否已存在
-      const existingEvent = await prisma.event.findFirst({
-        where: {
-          OR: [
-            { hostCode },
-            { shareCode }
-          ]
-        }
-      })
+      const exists = await EventService.checkCodeExists(hostCode!, shareCode!)
       
-      if (!existingEvent) {
+      if (!exists) {
         isUnique = true
       }
     }
 
-    const event = await prisma.event.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        speakTime: body.speakTime,
-        hostCode: hostCode!,
-        shareCode: shareCode!,
-      }
+    // 建立事件
+    const event = await EventService.create({
+      name: body.name,
+      description: body.description,
+      speakTime: body.speakTime,
+      hostCode: hostCode!,
+      shareCode: shareCode!,
     })
 
     return NextResponse.json({
       success: true,
-      event: {
-        ...event,
-        createdAt: event.createdAt.toISOString(),
-        updatedAt: event.updatedAt.toISOString()
-      }
+      event
     })
 
   } catch (error) {

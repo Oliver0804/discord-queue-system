@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { EventService, QueueService } from '@/lib/db'
 import { JoinQueueData } from '@/types'
 
 export async function POST(request: NextRequest) {
@@ -14,18 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 驗證活動是否存在且可加入
-    const event = await prisma.event.findUnique({
-      where: { id: body.eventId },
-      include: {
-        queues: {
-          where: {
-            status: {
-              not: 'removed'
-            }
-          }
-        }
-      }
-    })
+    const event = await EventService.findByCode(body.eventId)
 
     if (!event) {
       return NextResponse.json(
@@ -42,15 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 檢查是否已經在排隊中
-    const existingQueue = await prisma.queue.findFirst({
-      where: {
-        eventId: body.eventId,
-        discordId: body.discordId,
-        status: {
-          in: ['waiting', 'speaking']
-        }
-      }
-    })
+    const existingQueue = await QueueService.checkUserInQueue(event.id, body.discordId)
 
     if (existingQueue) {
       return NextResponse.json(
@@ -59,36 +40,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 取得目前最大的position
-    const lastQueue = await prisma.queue.findFirst({
-      where: {
-        eventId: body.eventId,
-        status: {
-          not: 'removed'
-        }
-      },
-      orderBy: {
-        position: 'desc'
-      }
-    })
+    // 取得下一個位置
+    const newPosition = await QueueService.getNextPosition(event.id)
 
-    const newPosition = lastQueue ? lastQueue.position + 1 : 1
-
-    const queue = await prisma.queue.create({
-      data: {
-        eventId: body.eventId,
-        discordId: body.discordId,
-        position: newPosition
-      }
+    const queue = await QueueService.create({
+      eventId: event.id,
+      discordId: body.discordId,
+      position: newPosition
     })
 
     return NextResponse.json({
       success: true,
-      queue: {
-        ...queue,
-        joinedAt: queue.joinedAt.toISOString(),
-        startedAt: queue.startedAt?.toISOString() || null
-      }
+      queue
     })
 
   } catch (error) {
