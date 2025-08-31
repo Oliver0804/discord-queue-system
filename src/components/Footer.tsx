@@ -25,7 +25,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-4 text-xs text-gray-400">
-          © 2025 Discord 直播排麥系統 - Powered by BASHCAT | v0.1.0
+          © 2025 Discord 直播排麥系統 - Powered by BASHCAT | v0.2.1
         </div>
       </div>
     </footer>
