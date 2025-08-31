@@ -25,7 +25,7 @@ export default function QueueManager({
   const speakingQueue = queues.find(q => q.status === 'speaking')
   const completedQueues = queues.filter(q => q.status === 'completed').sort((a, b) => a.position - b.position)
 
-  const handleDragEnd = async (result: any) => {
+  const handleDragEnd = async (result: { source: any; destination: any; draggableId: string }) => {
     setDraggedId(null)
     
     if (!result.destination) return
@@ -125,7 +125,7 @@ export default function QueueManager({
     }
   }
 
-  const handleDragStart = (result: any) => {
+  const handleDragStart = (result: { draggableId: string }) => {
     setDraggedId(result.draggableId)
   }
 

@@ -7,6 +7,7 @@ import { formatTime } from '@/lib/utils'
 import QRCodeDisplay from '@/components/QRCodeDisplay'
 import QueueManager from '@/components/QueueManager'
 import Timer from '@/components/Timer'
+import Footer from '@/components/Footer'
 
 export default function HostPage() {
   const { code } = useParams()
@@ -37,7 +38,7 @@ export default function HostPage() {
       } else {
         setError(result.error || '載入失敗')
       }
-    } catch (err) {
+    } catch {
       setError('網路錯誤')
     } finally {
       setIsLoading(false)
@@ -63,7 +64,7 @@ export default function HostPage() {
           const updatedQueue = {
             ...targetQueue,
             status: 'speaking' as const,
-            startedAt: startTime
+            startedAt: new Date(startTime)
           }
           setCurrentQueue(updatedQueue)
         }
@@ -101,7 +102,7 @@ export default function HostPage() {
         const updatedQueue = {
           ...nextInQueue,
           status: 'speaking' as const,
-          startedAt: startTime
+          startedAt: new Date(startTime)
         }
         setCurrentQueue(updatedQueue)
         
@@ -332,6 +333,7 @@ export default function HostPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

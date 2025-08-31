@@ -98,7 +98,8 @@ export default function QRCodeDisplay({ shareUrl, eventName }: QRCodeDisplayProp
             <li>• 將QR Code或連結分享給觀眾</li>
             <li>• 觀眾輸入Discord ID後自動排隊</li>
             <li>• 您可以拖曳調整排隊順序</li>
-            <li>• 時間到會自動切換下一位</li>
+            <li>• 時間到需手動點擊「下一位發言」</li>
+            <li>• 已完成發言者可拖回進行第二輪</li>
           </ul>
         </div>
       </div>

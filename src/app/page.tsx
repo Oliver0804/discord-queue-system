@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CreateEventData } from '@/types'
+import Footer from '@/components/Footer'
 
 export default function HomePage() {
   const [formData, setFormData] = useState<CreateEventData>({
@@ -127,6 +128,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // 在事務中更新所有排隊項目的位置
-    const updatedQueues = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const updates = []
       
       for (const item of body.queueItems) {

@@ -28,7 +28,7 @@ export async function DELETE(
     }
 
     // 標記為已移除而不是實際刪除，保持歷史記錄
-    const removedQueue = await prisma.queue.update({
+    await prisma.queue.update({
       where: { id },
       data: { status: 'removed' }
     })

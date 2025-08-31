@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Event, Queue } from '@/types'
 import { formatTime } from '@/lib/utils'
+import Footer from '@/components/Footer'
 
 export default function JoinPage() {
   const { code } = useParams()
@@ -318,6 +319,7 @@ export default function JoinPage() {
           </ul>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
