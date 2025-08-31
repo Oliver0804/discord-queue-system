@@ -37,7 +37,7 @@ export default function HomePage() {
       } else {
         setError(result.error || '建立活動失敗')
       }
-    } catch (err) {
+    } catch {
       setError('網路錯誤，請稍後再試')
     } finally {
       setIsLoading(false)

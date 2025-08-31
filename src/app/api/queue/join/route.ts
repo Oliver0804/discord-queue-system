@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { EventService, QueueService } from '@/lib/db'
+import { QueueService } from '@/lib/db'
 import { JoinQueueData } from '@/types'
 import { supabase } from '@/lib/supabase'
 

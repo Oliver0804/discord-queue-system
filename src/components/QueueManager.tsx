@@ -38,7 +38,7 @@ export default function QueueManager({
 
     // 處理拖曳邏輯
     let updatedWaitingQueues = [...waitingQueues]
-    let updatedCompletedQueues = [...completedQueues]
+    const updatedCompletedQueues = [...completedQueues]
     let itemToMove: Queue
 
     // 從來源移除項目

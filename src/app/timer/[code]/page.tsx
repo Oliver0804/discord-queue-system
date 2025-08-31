@@ -10,7 +10,7 @@ export default function TimerPage() {
   const [currentQueue, setCurrentQueue] = useState<Queue | null>(null)
   const [nextQueue, setNextQueue] = useState<Queue | null>(null)
   const [remainingTime, setRemainingTime] = useState<number>(0)
-  const [isActive, setIsActive] = useState(false)
+  const [, setIsActive] = useState(false)
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -98,12 +98,6 @@ export default function TimerPage() {
     return '#00ff00' // 綠色 - 正常
   }
 
-  const getStatusText = (): string => {
-    if (!currentQueue) return '等待發言者...'
-    if (remainingTime <= 0) return '時間到!'
-    if (remainingTime <= 60) return `剩餘 ${remainingTime} 秒`
-    return '發言中'
-  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">

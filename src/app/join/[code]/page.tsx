@@ -28,7 +28,7 @@ export default function JoinPage() {
       } else {
         setError(result.error || '載入失敗')
       }
-    } catch (err) {
+    } catch {
       setError('網路錯誤')
     } finally {
       setIsLoading(false)
@@ -67,7 +67,7 @@ export default function JoinPage() {
       } else {
         setError(result.error || '報名失敗')
       }
-    } catch (err) {
+    } catch {
       setError('網路錯誤，請稍後再試')
     } finally {
       setIsSubmitting(false)
