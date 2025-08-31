@@ -69,7 +69,7 @@ export default function HomePage() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({...prev, name: e.target.value}))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors"
                 placeholder="例：今晚直播互動時間"
               />
             </div>
@@ -83,7 +83,7 @@ export default function HomePage() {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors resize-none"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors resize-none"
                 placeholder="簡單描述這個活動的內容..."
               />
             </div>
@@ -96,7 +96,7 @@ export default function HomePage() {
                 id="speakTime"
                 value={formData.speakTime}
                 onChange={(e) => setFormData(prev => ({...prev, speakTime: parseInt(e.target.value)}))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors"
               >
                 <option value={60}>1 分鐘</option>
                 <option value={120}>2 分鐘</option>

@@ -70,7 +70,7 @@ export default function QRCodeDisplay({ shareUrl, eventName }: QRCodeDisplayProp
               type="text"
               value={shareUrl}
               readOnly
-              className="flex-1 text-sm bg-white border border-gray-300 rounded px-3 py-2 font-mono"
+              className="flex-1 text-sm bg-white text-gray-900 border border-gray-300 rounded px-3 py-2 font-mono"
             />
             <button
               onClick={copyToClipboard}

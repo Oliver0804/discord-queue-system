@@ -7,6 +7,7 @@ import { formatTime } from '@/lib/utils'
 import QRCodeDisplay from '@/components/QRCodeDisplay'
 import QueueManager from '@/components/QueueManager'
 import Timer from '@/components/Timer'
+import SevenSegmentTimer from '@/components/SevenSegmentTimer'
 import Footer from '@/components/Footer'
 
 export default function HostPage() {
@@ -17,6 +18,7 @@ export default function HostPage() {
   const [timerData, setTimerData] = useState<TimerData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showSevenSegmentTimer, setShowSevenSegmentTimer] = useState(false)
 
   const fetchEventData = useCallback(async () => {
     try {
@@ -105,6 +107,7 @@ export default function HostPage() {
           startedAt: new Date(startTime)
         }
         setCurrentQueue(updatedQueue)
+        setShowSevenSegmentTimer(true)
         
         // 發送API請求
         try {
@@ -124,6 +127,7 @@ export default function HostPage() {
       } else {
         setCurrentQueue(null)
         setTimerData(null)
+        setShowSevenSegmentTimer(false)
         // 重新獲取資料
         await fetchEventData()
       }
@@ -251,6 +255,7 @@ export default function HostPage() {
   if (!event) return null
 
   const shareUrl = `${window.location.origin}/join/${event.shareCode}`
+  const timerUrl = `${window.location.origin}/timer/${code}`
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -298,6 +303,31 @@ export default function HostPage() {
                   結束活動
                 </button>
               )}
+              
+              {/* OBS 計時器頁面連結 */}
+              <a
+                href={timerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium inline-flex items-center gap-2"
+              >
+                <span>🎥</span>
+                OBS 計時器頁面
+              </a>
+              
+              {/* 七段顯示器切換按鈕 */}
+              {currentQueue && (
+                <button
+                  onClick={() => setShowSevenSegmentTimer(!showSevenSegmentTimer)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    showSevenSegmentTimer 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                >
+                  {showSevenSegmentTimer ? '隱藏' : '顯示'} 七段計時器
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -336,6 +366,14 @@ export default function HostPage() {
         </div>
       </div>
       <Footer />
+      
+      {/* 七段顯示器倒數計時器 */}
+      <SevenSegmentTimer
+        currentQueue={currentQueue}
+        speakTime={event.speakTime}
+        isVisible={showSevenSegmentTimer}
+        onClose={() => setShowSevenSegmentTimer(false)}
+      />
     </div>
   )
 }

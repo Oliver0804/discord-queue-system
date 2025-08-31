@@ -181,7 +181,7 @@ export default function JoinPage() {
                   value={discordId}
                   onChange={(e) => setDiscordId(e.target.value)}
                   placeholder="例：username#1234 或 @username"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
+                  className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   請輸入您的 Discord 用戶名，主持人會依此呼叫您

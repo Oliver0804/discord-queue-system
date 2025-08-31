@@ -217,7 +217,15 @@ export class QueueService {
   }
 
   static async reorderBatch(eventId: string, queueItems: any[]) {
-    // 批量更新位置
+    // 為了避免唯一鍵衝突，分兩步執行：
+    // 1. 先將所有位置設為很大的數字（臨時位置），避免與現有位置衝突
+    const tempBase = 1000000 // 使用100萬作為基準
+    for (let i = 0; i < queueItems.length; i++) {
+      const item = queueItems[i]
+      await this.update(item.id, { position: tempBase + i })
+    }
+    
+    // 2. 再設定正確的位置
     for (const item of queueItems) {
       await this.update(item.id, { position: item.position })
     }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { EventService, QueueService } from '@/lib/db'
 import { JoinQueueData } from '@/types'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,10 +14,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 驗證活動是否存在且可加入
-    const event = await EventService.findByCode(body.eventId)
+    // 驗證活動是否存在且可加入 
+    // body.eventId 是真正的 event ID，不是分享碼
+    const { data: event, error } = await supabase
+      .from('Event')
+      .select('*')
+      .eq('id', body.eventId)
+      .single()
 
-    if (!event) {
+    if (error || !event) {
       return NextResponse.json(
         { error: '活動不存在' },
         { status: 404 }
