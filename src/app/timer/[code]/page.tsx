@@ -46,11 +46,23 @@ export default function TimerPage() {
     }
 
     const updateTimer = () => {
-      const startTime = new Date(currentQueue.startedAt!).getTime()
+      // 修復時區問題：確保時間被解析為 UTC
+      const startTimeStr = currentQueue.startedAt!.endsWith('Z') ? currentQueue.startedAt! : currentQueue.startedAt! + 'Z'
+      const startTime = new Date(startTimeStr).getTime()
       const now = Date.now()
       const elapsed = Math.floor((now - startTime) / 1000)
       const totalTime = event.speakTime + (currentQueue.extendedTime || 0)
       const remaining = Math.max(0, totalTime - elapsed)
+      
+      console.log('Timer 頁面計時器:', {
+        startedAt: currentQueue.startedAt,
+        fixedStartedAt: startTimeStr,
+        startTime,
+        now,
+        elapsed,
+        totalTime,
+        remaining
+      })
       
       setRemainingTime(remaining)
       setIsActive(remaining > 0)
@@ -100,6 +112,16 @@ export default function TimerPage() {
             </span>
           ))}
         </div>
+        
+        {/* 延長時間顯示 */}
+        {currentQueue && currentQueue.extendedTime > 0 && (
+          <div 
+            className="mt-4 text-2xl font-mono"
+            style={{ color: '#ff8800' }}
+          >
+            (+{formatSevenSegmentTime(currentQueue.extendedTime)})
+          </div>
+        )}
       </div>
     </div>
   )

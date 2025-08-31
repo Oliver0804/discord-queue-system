@@ -140,13 +140,19 @@ export default function Timer({ currentQueue, timerData, speakTime, onExtend, on
 
             {/* 時間資訊 */}
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-600">原始時間</p>
-                <p className="font-semibold">{formatTime(speakTime)}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-blue-700 font-medium">原始時間</p>
+                <p className="font-bold text-blue-900 text-lg">{formatTime(speakTime)}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-600">延長時間</p>
-                <p className="font-semibold">+{formatTime(currentQueue.extendedTime)}</p>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-orange-700 font-medium">
+                  {currentQueue.extendedTime > 0 ? '已延長時間' : '延長時間'}
+                </p>
+                <p className={`font-bold text-lg ${
+                  currentQueue.extendedTime > 0 ? 'text-orange-900' : 'text-gray-600'
+                }`}>
+                  +{formatTime(currentQueue.extendedTime)}
+                </p>
               </div>
             </div>
 

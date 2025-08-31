@@ -50,6 +50,7 @@ export default function HostPage() {
   const startSpeaking = async (queueId: string) => {
     try {
       const startTime = new Date().toISOString()
+      console.log('發言開始時間 (ISO):', startTime)
       const response = await fetch(`/api/queue/${queueId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -101,6 +102,7 @@ export default function HostPage() {
       if (nextInQueue) {
         // 立即更新狀態
         const startTime = new Date().toISOString()
+        console.log('下一位發言開始時間 (ISO):', startTime)
         const updatedQueue = {
           ...nextInQueue,
           status: 'speaking' as const,
@@ -173,6 +175,29 @@ export default function HostPage() {
     }
   }
 
+  const completeSpeaking = async (queueId: string) => {
+    try {
+      const response = await fetch(`/api/queue/${queueId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'completed'
+        })
+      })
+
+      if (response.ok) {
+        // 清除當前發言者狀態
+        setCurrentQueue(null)
+        setTimerData(null)
+        setShowSevenSegmentTimer(false)
+        // 重新獲取資料
+        await fetchEventData()
+      }
+    } catch (err) {
+      console.error('結束發言失敗:', err)
+    }
+  }
+
   const updateEventStatus = async (status: Event['status']) => {
     if (!event) return
 
@@ -199,10 +224,22 @@ export default function HostPage() {
 
   // 計時器邏輯
   useEffect(() => {
-    if (!currentQueue || !event) return
+    if (!currentQueue || !event || !currentQueue.startedAt) return
 
     const totalTime = event.speakTime + currentQueue.extendedTime
-    const startTime = new Date(currentQueue.startedAt!).getTime()
+    // 修復時區問題：確保時間被解析為 UTC
+    const startTimeStr = typeof currentQueue.startedAt === 'string' 
+      ? (currentQueue.startedAt.endsWith('Z') ? currentQueue.startedAt : currentQueue.startedAt + 'Z')
+      : currentQueue.startedAt.toISOString()
+    const startTime = new Date(startTimeStr).getTime()
+    
+    console.log('計時器資訊:', {
+      startedAt: currentQueue.startedAt,
+      fixedStartedAt: startTimeStr,
+      startTime,
+      now: Date.now(),
+      totalTime
+    })
     
     const timer = setInterval(() => {
       const now = Date.now()
@@ -347,6 +384,7 @@ export default function HostPage() {
               queues={queues}
               onStartSpeaking={startSpeaking}
               onRemove={removeFromQueue}
+              onCompleteSpeaking={completeSpeaking}
               onReorder={(newQueues) => setQueues(newQueues)}
               eventStatus={event.status}
             />

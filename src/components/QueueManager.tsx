@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { Queue, Event } from '@/types'
+import { formatTimeWithTimezone } from '@/lib/utils'
 
 interface QueueManagerProps {
   queues: Queue[]
   onStartSpeaking: (queueId: string) => void
   onRemove: (queueId: string) => void
+  onCompleteSpeaking: (queueId: string) => void
   onReorder: (newQueues: Queue[]) => void
   eventStatus: Event['status']
 }
@@ -16,6 +18,7 @@ export default function QueueManager({
   queues, 
   onStartSpeaking, 
   onRemove, 
+  onCompleteSpeaking,
   onReorder,
   eventStatus 
 }: QueueManagerProps) {
@@ -129,47 +132,58 @@ export default function QueueManager({
     setDraggedId(result.draggableId)
   }
 
-  const QueueItem = ({ queue, index, isDragging }: { queue: Queue; index?: number; isDragging?: boolean }) => (
-    <div className={`bg-white border rounded-lg p-4 ${
-      isDragging ? 'shadow-lg rotate-2 scale-105' : 'shadow-sm hover:shadow-md'
-    } transition-all duration-200`}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            {index !== undefined && (
-              <span className="bg-blue-100 text-blue-800 text-sm font-bold px-2 py-1 rounded">
-                #{index + 1}
-              </span>
-            )}
-            <div>
-              <p className="font-medium text-gray-800">{queue.discordId}</p>
-              <p className="text-sm text-gray-500">
-                加入時間：{new Date(queue.joinedAt).toLocaleTimeString('zh-TW')}
-              </p>
+  const QueueItem = ({ queue, index, isDragging }: { queue: Queue; index?: number; isDragging?: boolean }) => {
+    // 檢查是否有人正在發言
+    const isSomeoneSeaking = speakingQueue !== undefined
+    
+    return (
+      <div className={`bg-white border rounded-lg p-4 ${
+        isDragging ? 'shadow-lg rotate-2 scale-105' : 'shadow-sm hover:shadow-md'
+      } transition-all duration-200`}>
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              {index !== undefined && (
+                <span className="bg-blue-100 text-blue-800 text-sm font-bold px-2 py-1 rounded">
+                  #{index + 1}
+                </span>
+              )}
+              <div>
+                <p className="font-medium text-gray-800">{queue.discordId}</p>
+                <p className="text-sm text-gray-500">
+                  加入時間：{formatTimeWithTimezone(queue.joinedAt)}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {queue.status === 'waiting' && eventStatus === 'active' && (
-            <button
-              onClick={() => onStartSpeaking(queue.id)}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium"
-            >
-              開始發言
-            </button>
-          )}
           
-          <button
-            onClick={() => onRemove(queue.id)}
-            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium"
-          >
-            移除
-          </button>
+          <div className="flex items-center gap-2">
+            {queue.status === 'waiting' && eventStatus === 'active' && (
+              <button
+                onClick={() => onStartSpeaking(queue.id)}
+                disabled={isSomeoneSeaking}
+                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                  isSomeoneSeaking 
+                    ? 'bg-gray-400 cursor-not-allowed text-white' 
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+                title={isSomeoneSeaking ? '有人正在發言中，請稍後' : '開始發言'}
+              >
+                開始發言
+              </button>
+            )}
+            
+            <button
+              onClick={() => onRemove(queue.id)}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium"
+            >
+              移除
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
@@ -192,15 +206,23 @@ export default function QueueManager({
               <div>
                 <p className="font-medium text-green-800">{speakingQueue.discordId}</p>
                 <p className="text-sm text-green-600">
-                  開始時間：{speakingQueue.startedAt ? new Date(speakingQueue.startedAt).toLocaleTimeString('zh-TW') : ''}
+                  開始時間：{speakingQueue.startedAt ? formatTimeWithTimezone(speakingQueue.startedAt) : ''}
                 </p>
               </div>
-              <button
-                onClick={() => onRemove(speakingQueue.id)}
-                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium"
-              >
-                移除
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onCompleteSpeaking(speakingQueue.id)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium"
+                >
+                  結束發言
+                </button>
+                <button
+                  onClick={() => onRemove(speakingQueue.id)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium"
+                >
+                  移除
+                </button>
+              </div>
             </div>
           </div>
         </div>

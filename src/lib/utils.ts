@@ -17,3 +17,9 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
 export function generateUUID(): string {
   return uuidv4()
 }
+
+export function formatTimeWithTimezone(dateString: string): string {
+  // 確保時間字串有 Z 後綴以正確解析為 UTC
+  const isoString = dateString.endsWith('Z') ? dateString : dateString + 'Z'
+  return new Date(isoString).toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei' })
+}

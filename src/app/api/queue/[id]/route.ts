@@ -60,11 +60,22 @@ export async function PATCH(
       )
     }
 
-    const updatedQueue = await QueueService.update(id, {
-      status: body.status,
-      startedAt: body.startedAt || null,
-      extendedTime: body.extendedTime
-    })
+    // 準備更新資料，只更新提供的欄位
+    const updateData: any = {}
+    
+    if (body.status !== undefined) {
+      updateData.status = body.status
+    }
+    
+    if (body.startedAt !== undefined) {
+      updateData.startedAt = body.startedAt
+    }
+    
+    if (body.extendedTime !== undefined) {
+      updateData.extendedTime = body.extendedTime
+    }
+
+    const updatedQueue = await QueueService.update(id, updateData)
 
     return NextResponse.json({
       success: true,
