@@ -129,7 +129,8 @@ export default function JoinPage() {
   if (!event) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex flex-col">
+      <div className="flex-1 p-4">
       <div className="max-w-2xl mx-auto pt-8">
         {/* 活動資訊 */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -317,6 +318,7 @@ export default function JoinPage() {
             <li>• 主持人可能會延長或縮短發言時間</li>
             <li>• 請保持此頁面開啟以接收最新狀態</li>
           </ul>
+        </div>
         </div>
       </div>
       <Footer />

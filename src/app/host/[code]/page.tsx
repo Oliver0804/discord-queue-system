@@ -253,7 +253,8 @@ export default function HostPage() {
   const shareUrl = `${window.location.origin}/join/${event.shareCode}`
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex-1 p-4">
       <div className="max-w-7xl mx-auto">
         {/* 頁面標題 */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -331,6 +332,7 @@ export default function HostPage() {
               onNext={nextSpeaker}
             />
           </div>
+        </div>
         </div>
       </div>
       <Footer />

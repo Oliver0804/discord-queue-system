@@ -45,9 +45,10 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-md mx-auto pt-20">
-        <div className="bg-white rounded-xl shadow-lg p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+      <div className="flex-1 p-4">
+        <div className="max-w-md mx-auto pt-20">
+          <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
               Discord 排麥系統
@@ -125,6 +126,7 @@ export default function HomePage() {
             <p className="text-center text-sm text-gray-500">
               建立完成後，您將獲得主持人管理頁面和觀眾報名連結
             </p>
+          </div>
           </div>
         </div>
       </div>
