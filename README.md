@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Discord 直播排麥系統
 
-## Getting Started
+一個專為 Discord 直播設計的排隊發言系統，讓主持人可以有序管理觀眾的發言請求。
 
-First, run the development server:
+## 功能特色
+
+- ✨ **簡單易用**: 掃描 QR Code 或點擊連結即可報名
+- 🎯 **實時管理**: 主持人可即時查看排隊狀況並調整順序
+- ⏰ **智能計時**: 自動倒數計時，並在結束前提醒
+- 🔊 **音效提醒**: 1分鐘警告和時間到提示音
+- 📱 **響應式設計**: 支援手機、平板、電腦各種裝置
+- 🎨 **美觀界面**: 現代化 UI 設計，操作直觀
+
+## 使用流程
+
+### 對主持人
+1. 在首頁建立新活動（設定名稱、描述、每人發言時間）
+2. 獲得 QR Code 和分享連結
+3. 將連結分享給觀眾
+4. 在管理頁面查看排隊狀況
+5. 可拖曳調整排隊順序
+6. 點擊開始讓下一位發言
+7. 系統會自動計時並提醒
+
+### 對觀眾
+1. 掃描 QR Code 或點擊分享連結
+2. 輸入 Discord ID 報名
+3. 查看目前排隊位置和預計等待時間
+4. 等待輪到自己發言
+
+## 技術特色
+
+- **前端**: Next.js 14 + TypeScript + Tailwind CSS
+- **後端**: Next.js API Routes
+- **資料庫**: SQLite (開發) / PostgreSQL (生產)
+- **UI 組件**: 自製響應式組件
+- **拖曳功能**: @hello-pangea/dnd
+- **QR Code**: qrcode.js
+
+## 開發與部署
+
+### 本地開發
 
 ```bash
+# 安裝依賴
+npm install
+
+# 初始化資料庫
+npx prisma migrate dev
+
+# 啟動開發伺服器
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+訪問 [http://localhost:3000](http://localhost:3000) 查看結果。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 生產部署
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 建構專案
+npm run build
 
-## Learn More
+# 啟動生產伺服器
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 系統需求
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Node.js 18+
+- 現代瀏覽器（支援 Web Audio API）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 特殊功能說明
 
-## Deploy on Vercel
+### 音效系統
+- 剩餘1分鐘：播放兩聲短音
+- 時間結束：播放三聲長音
+- 使用瀏覽器內建 Web Audio API，無需額外音效檔案
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 排隊管理
+- 支援拖曳重新排序
+- 即時同步所有用戶的排隊狀態
+- 主持人可隨時移除排隊者
+- 支援延長發言時間（30秒/1分鐘）
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 響應式設計
+- 手機端優化的觸控操作
+- 平板端的完整功能體驗
+- 桌面端的專業管理界面
+
+這個系統特別適合用於：
+- Discord 直播互動環節
+- 線上會議發言管理
+- 虛拟活動排隊系統
+- 任何需要有序發言的場合

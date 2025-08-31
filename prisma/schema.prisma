@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  speakTime   Int      // 發言時間（秒）
+  hostCode    String   @unique // 主持人管理碼
+  shareCode   String   @unique // 分享碼
+  status      String   @default("preparing") // preparing, active, finished
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 關聯到排隊列表
+  queues      Queue[]
+}
+
+model Queue {
+  id           String    @id @default(cuid())
+  eventId      String
+  discordId    String
+  position     Int       // 排隊順序
+  status       String    @default("waiting") // waiting, speaking, completed, removed
+  joinedAt     DateTime  @default(now())
+  startedAt    DateTime? // 開始發言時間
+  extendedTime Int       @default(0) // 延長時間（秒）
+  
+  // 關聯到活動
+  event        Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, position])
+}
