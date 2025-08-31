@@ -54,7 +54,10 @@ export default function TimerPage() {
 
     const updateTimer = () => {
       // 修復時區問題：確保時間被解析為 UTC
-      const startTimeStr = currentQueue.startedAt!.endsWith('Z') ? currentQueue.startedAt! : currentQueue.startedAt! + 'Z'
+      const startedAt = currentQueue.startedAt!
+      const startTimeStr = typeof startedAt === 'string' 
+        ? (startedAt.endsWith('Z') ? startedAt : startedAt + 'Z')
+        : (startedAt instanceof Date ? startedAt.toISOString() : new Date().toISOString())
       const startTime = new Date(startTimeStr).getTime()
       const now = Date.now()
       const elapsed = Math.floor((now - startTime) / 1000)

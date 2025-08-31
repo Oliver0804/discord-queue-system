@@ -230,7 +230,7 @@ export default function HostPage() {
     // 修復時區問題：確保時間被解析為 UTC
     const startTimeStr = typeof currentQueue.startedAt === 'string' 
       ? (currentQueue.startedAt.endsWith('Z') ? currentQueue.startedAt : currentQueue.startedAt + 'Z')
-      : currentQueue.startedAt.toISOString()
+      : (currentQueue.startedAt instanceof Date ? currentQueue.startedAt.toISOString() : new Date().toISOString())
     const startTime = new Date(startTimeStr).getTime()
     
     console.log('計時器資訊:', {

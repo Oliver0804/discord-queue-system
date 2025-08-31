@@ -17,8 +17,8 @@ export interface Queue {
   discordId: string
   position: number
   status: 'waiting' | 'speaking' | 'completed' | 'removed'
-  joinedAt: Date
-  startedAt: Date | null
+  joinedAt: Date | string
+  startedAt: Date | string | null
   extendedTime: number
   event?: Event
 }

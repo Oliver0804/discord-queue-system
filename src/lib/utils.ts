@@ -18,8 +18,15 @@ export function generateUUID(): string {
   return uuidv4()
 }
 
-export function formatTimeWithTimezone(dateString: string): string {
-  // 確保時間字串有 Z 後綴以正確解析為 UTC
-  const isoString = dateString.endsWith('Z') ? dateString : dateString + 'Z'
-  return new Date(isoString).toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei' })
+export function formatTimeWithTimezone(dateInput: string | Date): string {
+  // 處理不同的輸入類型
+  let date: Date
+  if (typeof dateInput === 'string') {
+    // 確保時間字串有 Z 後綴以正確解析為 UTC
+    const isoString = dateInput.endsWith('Z') ? dateInput : dateInput + 'Z'
+    date = new Date(isoString)
+  } else {
+    date = dateInput
+  }
+  return date.toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei' })
 }
