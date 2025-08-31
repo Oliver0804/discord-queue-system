@@ -101,77 +101,78 @@ export default function TimerPage() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="text-center space-y-8">
-        {/* 原有的七段顯示器框框，內部添加發言人名稱和延長時間 */}
-        <div 
-          className="seven-segment-display-ultra"
-          style={{ color: getDisplayColor() }}
-        >
-          {/* 上方發言者資訊：正在發言（左）+ 下一位發言者（右） */}
-          <div className="flex justify-between items-start mb-4">
-            {/* 正在發言（左側） */}
-            {currentQueue && (
-              <div className="text-left">
-                <div className="text-xl font-bold mb-1 text-green-400">正在發言</div>
-                <div 
-                  className="text-3xl font-bold"
-                  style={{ color: getDisplayColor() }}
-                >
-                  {currentQueue.discordId}
-                </div>
-              </div>
-            )}
-            
-            {/* 下一位（右側） */}
-            {nextQueue && (
-              <div className="text-right">
-                <div className="text-xl font-bold mb-1 text-yellow-400">下一位</div>
-                <div className="text-3xl font-bold text-yellow-300">
-                  {nextQueue.discordId}
-                </div>
-                <div className="text-sm opacity-75 text-yellow-300">#{nextQueue.position}</div>
-              </div>
-            )}
-          </div>
-          
-          {/* 主要時間顯示 */}
-          <div className="mb-4">
-            {formatSevenSegmentTime(remainingTime).split('').map((char, index) => (
-              <span 
-                key={index} 
-                className={char === ':' ? 'seven-segment-separator-ultra' : 'seven-segment-digit-ultra'}
-              >
-                {char}
-              </span>
-            ))}
-          </div>
-          
-          {/* 延長時間顯示 */}
-          {currentQueue && currentQueue.extendedTime > 0 && (
-            <div 
-              className="text-2xl font-mono"
-              style={{ color: '#ff8800' }}
-            >
-              (+{formatSevenSegmentTime(currentQueue.extendedTime)})
-            </div>
-          )}
-        </div>
-        
-        {/* 沒有發言者時的顯示 */}
-        {!currentQueue && !nextQueue && (
-          <div className="text-center">
-            <div className="seven-segment-display-ultra text-gray-500">
-              <div className="text-2xl mb-4">等待發言者...</div>
-              <div>
-                {formatSevenSegmentTime(0).split('').map((char, index) => (
-                  <span 
-                    key={index} 
-                    className={char === ':' ? 'seven-segment-separator-ultra' : 'seven-segment-digit-ultra'}
+      <div className="text-center">
+        {/* 有發言者時的顯示 */}
+        {(currentQueue || nextQueue) && (
+          <div 
+            className="seven-segment-display-ultra"
+            style={{ color: getDisplayColor() }}
+          >
+            {/* 上方發言者資訊：正在發言（左）+ 下一位發言者（右） */}
+            <div className="flex justify-between items-start mb-4">
+              {/* 正在發言（左側） */}
+              {currentQueue && (
+                <div className="text-left">
+                  <div className="text-xl font-bold mb-1 text-green-400">正在發言</div>
+                  <div 
+                    className="text-3xl font-bold"
+                    style={{ color: getDisplayColor() }}
                   >
-                    {char}
-                  </span>
-                ))}
+                    {currentQueue.discordId}
+                  </div>
+                </div>
+              )}
+              
+              {/* 下一位（右側） */}
+              {nextQueue && (
+                <div className="text-right">
+                  <div className="text-xl font-bold mb-1 text-yellow-400">下一位</div>
+                  <div className="text-3xl font-bold text-yellow-300">
+                    {nextQueue.discordId}
+                  </div>
+                  <div className="text-sm opacity-75 text-yellow-300">#{nextQueue.position}</div>
+                </div>
+              )}
+            </div>
+            
+            {/* 主要時間顯示 */}
+            <div className="mb-4">
+              {formatSevenSegmentTime(remainingTime).split('').map((char, index) => (
+                <span 
+                  key={index} 
+                  className={char === ':' ? 'seven-segment-separator-ultra' : 'seven-segment-digit-ultra'}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+            
+            {/* 延長時間顯示 */}
+            {currentQueue && currentQueue.extendedTime > 0 && (
+              <div 
+                className="text-2xl font-mono"
+                style={{ color: '#ff8800' }}
+              >
+                (+{formatSevenSegmentTime(currentQueue.extendedTime)})
               </div>
+            )}
+          </div>
+        )}
+        
+        {/* 沒有發言者時的顯示：只顯示 --:-- */}
+        {!currentQueue && !nextQueue && (
+          <div 
+            className="seven-segment-display-ultra text-gray-500"
+          >
+            <div>
+              {formatSevenSegmentTime(0).split('').map((char, index) => (
+                <span 
+                  key={index} 
+                  className={char === ':' ? 'seven-segment-separator-ultra' : 'seven-segment-digit-ultra'}
+                >
+                  {char}
+                </span>
+              ))}
             </div>
           </div>
         )}
